@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Inject,
+    Logger,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { GetLast60SecondsTransactionsUseCase } from 'src/application/use-cases';
@@ -11,6 +12,8 @@ import { USE_CASE_TOKENS } from 'src/domain/tokens';
 @ApiTags('Statistics')
 @Controller('statistics')
 export class StatisticsController {
+    private readonly logger = new Logger(StatisticsController.name);
+
     constructor(        
         @Inject(USE_CASE_TOKENS.GET_LAST_TRANSACTIONS)
         private readonly getLast60s: GetLast60SecondsTransactionsUseCase,
@@ -38,6 +41,14 @@ export class StatisticsController {
 
         const amounts = itens.map(t => Number(t.amount));
         const sum = amounts.reduce((acc, curr) => acc + curr, 0);
+
+        this.logger.log(`Estatísticas: ${JSON.stringify({
+            count: itens.length,
+            sum: sum,
+            avg: sum / itens.length,
+            min: Math.min(...amounts),
+            max: Math.max(...amounts),
+        })}`);
 
         return {
             count: itens.length,
