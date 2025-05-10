@@ -8,11 +8,18 @@ import {
 } from './application/use-cases';
 
 import { MemoryTransactionRepository } from './infrastructure/repository';
-import { REPOSITORY_TOKENS, USE_CASE_TOKENS } from './domain/tokens';
+import { EVENT_HANDLER_TOKENS, REPOSITORY_TOKENS, USE_CASE_TOKENS } from './domain/tokens';
+import { StatisticsGateway } from './presentation/gateways';
+import { TransactionEventService } from './infrastructure/service/transaction-event.service';
 
 @Module({
   controllers: [TransactionsController],
   providers: [
+    StatisticsGateway,
+    {
+      provide: EVENT_HANDLER_TOKENS.TRANSACTION,
+      useClass: TransactionEventService,
+    },
     {
       provide: USE_CASE_TOKENS.ADD_TRANSACTION,
       useClass: AddTransactionUseCase,
