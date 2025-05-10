@@ -1,10 +1,15 @@
-import { TransactionRepository } from "src/domain/repositories";
+import { Inject, Injectable } from "@nestjs/common";
+import { ITransactionRepository } from "src/domain/interface/repositories";
+import { IDeleteAllTransactionsUseCase } from "src/domain/interface/use-case";
+import { REPOSITORY_TOKENS } from "src/domain/tokens";
 
-export class DeleteAllTransactionsUseCase {
-  constructor(private readonly transactionRepo: TransactionRepository) {}
+@Injectable()
+export class DeleteAllTransactionsUseCase implements IDeleteAllTransactionsUseCase {
+  constructor(
+    @Inject(REPOSITORY_TOKENS.TRANSACTION)
+    private readonly transactionRepo: ITransactionRepository) {}
 
   async execute(): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    this.transactionRepo.deleteAll();
+    await this.transactionRepo.deleteAll();
   }
 }

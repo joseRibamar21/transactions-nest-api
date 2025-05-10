@@ -1,19 +1,21 @@
+import { Inject, Injectable } from '@nestjs/common';
 import { Transaction } from 'src/domain/entities';
-import { TransactionRepository } from 'src/domain/repositories';
+import { ITransactionRepository } from 'src/domain/interface/repositories';
+import { IAddTransactionUseCase } from 'src/domain/interface/use-case';
+import { REPOSITORY_TOKENS } from 'src/domain/tokens';
 
 
-interface AddTransactionInput {
-  amount: string;
-  timestamp: Date;
-}
 
-export class AddTransactionUseCase {
-  constructor(private readonly transactionRepo: TransactionRepository) {}
+@Injectable()
+export class AddTransactionUseCase implements IAddTransactionUseCase {
+  constructor(
+    @Inject(REPOSITORY_TOKENS.TRANSACTION)
+    private readonly transactionRepo: ITransactionRepository
+  ) {}
 
-  async execute(input: AddTransactionInput): Promise<void> {
-    const transaction = new Transaction(input);
-    
-    await new Promise(resolve => setTimeout(resolve, 200));
-    this.transactionRepo.addTransaction(transaction);
+  async execute(amount: number, timestamp: Date): Promise<void> {
+    const transaction = new Transaction({ amount, timestamp });
+  
+    await this.transactionRepo.addTransaction(transaction);
   }
 }

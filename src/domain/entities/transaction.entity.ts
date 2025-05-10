@@ -2,13 +2,13 @@ import { TransactionError } from "../errors/transaction-error";
 import { Entity } from "./entity";
 
 export interface TransactionProps {
-    amount: string
+    amount: number
     timestamp: Date
 }
 
 export class Transaction extends Entity<TransactionProps> {
     constructor(props: TransactionProps) {
-        if (parseFloat(props.amount) < 0) {
+        if (props.amount < 0) {
             throw new TransactionError('NEGATIVE_AMOUNT');
         }
         if (props.timestamp > new Date()) {
@@ -17,14 +17,14 @@ export class Transaction extends Entity<TransactionProps> {
         super(props);
     }
 
-    get amount(): string {
+    get amount(): number {
         return this.props.amount;
     }
     get timestamp(): Date {
         return this.props.timestamp;
     }
 
-    set amount(value: string) {
+    set amount(value: number) {
         this.props.amount = value;
     }
 

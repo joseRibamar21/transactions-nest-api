@@ -1,11 +1,17 @@
+import { Inject, Injectable } from "@nestjs/common";
 import { Transaction } from "src/domain/entities";
-import { TransactionRepository } from "src/domain/repositories";
+import { ITransactionRepository } from "src/domain/interface/repositories";
+import { IGetLastTransactionsUseCase } from "src/domain/interface/use-case";
+import { REPOSITORY_TOKENS } from "src/domain/tokens";
 
 
-export class GetLast60SecondsTransactionsUseCase {
-  constructor(private readonly transactionRepo: TransactionRepository) {}
+@Injectable()
+export class GetLast60SecondsTransactionsUseCase implements IGetLastTransactionsUseCase {
+  constructor(
+    @Inject(REPOSITORY_TOKENS.TRANSACTION)
+    private readonly transactionRepo: ITransactionRepository) {}
 
   async execute(): Promise<Transaction[]> {
-    return this.transactionRepo.getLast60SecondsTransactions();
+    return await this.transactionRepo.getLast60SecondsTransactions();
   }
 }
