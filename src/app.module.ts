@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TransactionsController } from './presentation/controllers/transactions.controller';
 
 import {
   AddTransactionUseCase,
@@ -11,9 +10,21 @@ import { MemoryTransactionRepository } from './infrastructure/repository';
 import { EVENT_HANDLER_TOKENS, REPOSITORY_TOKENS, USE_CASE_TOKENS } from './domain/tokens';
 import { StatisticsGateway } from './presentation/gateways';
 import { TransactionEventService } from './infrastructure/service/transaction-event.service';
+import { StatisticsController, TransactionsController, WebSocketInfoController } from './presentation/controllers';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
-  controllers: [TransactionsController],
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/',
+      serveStaticOptions: {
+        index: ['dashboard.html'],
+      },
+    }),
+  ],
+  controllers: [TransactionsController, StatisticsController, WebSocketInfoController],
   providers: [
     StatisticsGateway,
     {
@@ -38,4 +49,4 @@ import { TransactionEventService } from './infrastructure/service/transaction-ev
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

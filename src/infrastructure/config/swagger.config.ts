@@ -6,8 +6,6 @@ export function setupSwagger(app: INestApplication) {
     .setTitle('Transaction API')
     .setDescription('API para gerenciar transações')
     .setVersion('1.0')
-    .addTag('transactions')
-    .addTag('health')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
