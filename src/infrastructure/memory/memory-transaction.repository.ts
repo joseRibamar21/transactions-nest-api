@@ -2,7 +2,7 @@ import { Transaction } from "src/domain/entities";
 import { TransactionRepository } from "src/domain/repositories";
 
 
-export class InMemoryTransactionRepository implements TransactionRepository {
+export class MemoryTransactionRepository implements TransactionRepository {
   private transactions: Transaction[] = [];
 
   addTransaction(transaction: Transaction): void {
