@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 
 import {
   AddTransactionUseCase,
@@ -13,6 +13,7 @@ import { TransactionEventService } from './infrastructure/service/transaction-ev
 import { HealthController, StatisticsController, TransactionsController, WebSocketInfoController } from './presentation/controllers';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { JsonOnlyMiddleware } from './infrastructure/middleware';
 
 @Module({
   imports: [
@@ -24,6 +25,8 @@ import { join } from 'path';
       },
     }),
   ],
+  
+
   controllers: [HealthController, TransactionsController, StatisticsController, WebSocketInfoController],
   providers: [
     StatisticsGateway,
@@ -49,4 +52,11 @@ import { join } from 'path';
     },
   ],
 })
-export class AppModule { }
+
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JsonOnlyMiddleware)
+      .forRoutes('*');
+  }
+ }

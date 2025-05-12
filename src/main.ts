@@ -13,6 +13,12 @@ async function bootstrap() {
   setupSwagger(app);
   setupHelmet(app);
   
+  app.use((req: any, res: { setHeader: (arg0: string, arg1: string) => void; }, next: () => void) => {
+    res.setHeader('Content-Type', 'application/json');
+    next();
+  });
+
+
   app.enableCors({
     origin: env.corsOrigin,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
