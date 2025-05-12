@@ -2,30 +2,35 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionsController } from 'src/presentation/controllers/transactions.controller';
 import { AddTransactionUseCase, DeleteAllTransactionsUseCase } from 'src/application/use-cases';
 import { BadRequestException, UnprocessableEntityException } from '@nestjs/common';
+import { USE_CASE_TOKENS } from 'src/domain/tokens';
 
 describe('TransactionsController', () => {
   let controller: TransactionsController;
-  let addUseCase: jest.Mocked<AddTransactionUseCase>;
-  let deleteUseCase: jest.Mocked<DeleteAllTransactionsUseCase>;
+  let addUseCase: AddTransactionUseCase;
+  let deleteUseCase: DeleteAllTransactionsUseCase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TransactionsController],
       providers: [
         {
-          provide: AddTransactionUseCase,
-          useValue: { execute: jest.fn() },
+          provide: USE_CASE_TOKENS.ADD_TRANSACTION,
+          useValue: {
+            execute: jest.fn(),
+          },
         },
         {
-          provide: DeleteAllTransactionsUseCase,
-          useValue: { execute: jest.fn() },
+          provide: USE_CASE_TOKENS.DELETE_ALL_TRANSACTIONS,
+          useValue: {
+            execute: jest.fn(),
+          },
         },
       ],
     }).compile();
 
     controller = module.get(TransactionsController);
-    addUseCase = module.get(AddTransactionUseCase);
-    deleteUseCase = module.get(DeleteAllTransactionsUseCase);
+    addUseCase = module.get(USE_CASE_TOKENS.ADD_TRANSACTION);
+    deleteUseCase = module.get(USE_CASE_TOKENS.DELETE_ALL_TRANSACTIONS);
   });
 
   describe('add()', () => {
