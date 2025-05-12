@@ -31,14 +31,6 @@ jobs:
     
     - name: Build
       run: yarn build
-    
-    - name: Upload coverage reports
-      uses: codecov/codecov-action@v3
-      with:
-        file: ./coverage/clover.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: true
 
   docker:
     runs-on: ubuntu-latest
