@@ -29,7 +29,8 @@ export class StatisticsController {
     async list(): Promise<StatisticsResponseDto> {
         const itens = await this.getLast60s.execute();
 
-        if (!itens) {
+        if (!itens || itens.length === 0) {
+            this.logger.log('Nenhuma transação encontrada nos últimos 60 segundos.');
             return {
                 count: 0,
                 sum: 0,
