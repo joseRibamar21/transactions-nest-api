@@ -16,5 +16,6 @@ export class DeleteAllTransactionsUseCase implements IDeleteAllTransactionsUseCa
   async execute(): Promise<void> {
     await this.transactionRepo.deleteAll();
     this.eventHandler.onTransactionsDeleted();
+    
   }
 }

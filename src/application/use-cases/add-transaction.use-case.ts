@@ -16,10 +16,11 @@ export class AddTransactionUseCase implements IAddTransactionUseCase {
     private readonly eventHandler: ITransactionEventHandler,
   ) {}
 
-  async execute(amount: number, timestamp: Date): Promise<void> {
+  async execute(amount: number, timestamp: Date): Promise<Transaction> {
     const transaction = new Transaction({ amount, timestamp });
   
     await this.transactionRepo.addTransaction(transaction);
     this.eventHandler.onTransactionCreated();
+    return transaction;
   }
 }
