@@ -19,9 +19,20 @@ import {
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JsonOnlyMiddleware } from './infrastructure/middleware';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
+
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/',
@@ -40,6 +51,10 @@ import { JsonOnlyMiddleware } from './infrastructure/middleware';
   ],
   providers: [
     StatisticsGateway,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
+    },
     {
       provide: EVENT_HANDLER_TOKENS.TRANSACTION,
       useClass: TransactionEventService,
