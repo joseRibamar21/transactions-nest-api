@@ -14,7 +14,7 @@ describe('StatisticsGateway (e2e)', () => {
   
       app = moduleFixture.createNestApplication();
       await app.init();
-      await app.listen(3000); // essencial para socket funcionar
+      await app.listen(3000);
   
       clientSocket = Client(`http://localhost:3000/statistics`, {
         transports: ['websocket'],

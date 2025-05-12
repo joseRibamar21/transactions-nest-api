@@ -13,7 +13,7 @@ async function bootstrap() {
   setupSwagger(app);
   setupHelmet(app);
   
-  app.use((req: any, res: { setHeader: (arg0: string, arg1: string) => void; }, next: () => void) => {
+  app.use((_req: any, res: { setHeader: (arg0: string, arg1: string) => void; }, next: () => void) => {
     res.setHeader('Content-Type', 'application/json');
     next();
   });
