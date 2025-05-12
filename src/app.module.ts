@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 
 import {
   AddTransactionUseCase,
@@ -10,7 +10,12 @@ import { MemoryTransactionRepository } from './infrastructure/repository';
 import { EVENT_HANDLER_TOKENS, REPOSITORY_TOKENS, USE_CASE_TOKENS } from './domain/tokens';
 import { StatisticsGateway } from './presentation/gateways';
 import { TransactionEventService } from './infrastructure/service/transaction-event.service';
-import { HealthController, StatisticsController, TransactionsController, WebSocketInfoController } from './presentation/controllers';
+import {
+  HealthController,
+  StatisticsController,
+  TransactionsController,
+  WebSocketInfoController
+} from './presentation/controllers';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JsonOnlyMiddleware } from './infrastructure/middleware';
@@ -25,9 +30,14 @@ import { JsonOnlyMiddleware } from './infrastructure/middleware';
       },
     }),
   ],
-  
 
-  controllers: [HealthController, TransactionsController, StatisticsController, WebSocketInfoController],
+
+  controllers: [
+    HealthController,
+    TransactionsController,
+    StatisticsController,
+    WebSocketInfoController
+  ],
   providers: [
     StatisticsGateway,
     {
@@ -57,6 +67,10 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JsonOnlyMiddleware)
-      .forRoutes('*');
+      .forRoutes(
+        { path: '*', method: RequestMethod.POST },
+        { path: '*', method: RequestMethod.PUT },
+        { path: '*', method: RequestMethod.PATCH },
+      );
   }
- }
+}

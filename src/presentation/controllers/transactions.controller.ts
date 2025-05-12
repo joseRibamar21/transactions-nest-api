@@ -37,7 +37,7 @@ export class TransactionsController {
         const amount = Number(dto.amount);
         const timestamp = new Date(dto.timestamp);
         const now = new Date();
-        
+
         if (isNaN(amount)) {
             throw new BadRequestException('O campo amount deve ser um número válido.');
         }
