@@ -10,7 +10,7 @@ import { MemoryTransactionRepository } from './infrastructure/repository';
 import { EVENT_HANDLER_TOKENS, REPOSITORY_TOKENS, USE_CASE_TOKENS } from './domain/tokens';
 import { StatisticsGateway } from './presentation/gateways';
 import { TransactionEventService } from './infrastructure/service/transaction-event.service';
-import { StatisticsController, TransactionsController, WebSocketInfoController } from './presentation/controllers';
+import { HealthController, StatisticsController, TransactionsController, WebSocketInfoController } from './presentation/controllers';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -24,7 +24,7 @@ import { join } from 'path';
       },
     }),
   ],
-  controllers: [TransactionsController, StatisticsController, WebSocketInfoController],
+  controllers: [HealthController, TransactionsController, StatisticsController, WebSocketInfoController],
   providers: [
     StatisticsGateway,
     {

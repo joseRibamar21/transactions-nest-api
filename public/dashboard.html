@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>WebSocket Finance Chart</title>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       body {
@@ -13,7 +13,6 @@
       canvas {
         max-width: 800px;
       }
-      
     </style>
   </head>
   <body>
@@ -22,97 +21,105 @@
     <canvas id="statsChart"></canvas>
 
     <script>
-      const socket = io('http://localhost:3000/statistics');
+      document.addEventListener('DOMContentLoaded', () => {
+        const socket = io('http://localhost:3000/statistics', {
+          transports: ['websocket'],
+        });
 
-      const labels = [];
-      const sumData = [];
-      const avgData = [];
-      const minData = [];
-      const maxData = [];
+        const labels = [];
+        const sumData = [];
+        const avgData = [];
+        const minData = [];
+        const maxData = [];
 
-      const ctx = document.getElementById('statsChart').getContext('2d');
-      const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Soma',
-              data: sumData,
-              borderColor: 'blue',
-              fill: false,
-            },
-            {
-              label: 'Média',
-              data: avgData,
-              borderColor: 'green',
-              fill: false,
-            },
-            {
-              label: 'Mínimo',
-              data: minData,
-              borderColor: 'red',
-              fill: false,
-            },
-            {
-              label: 'Máximo',
-              data: maxData,
-              borderColor: 'orange',
-              fill: false,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: 'Tempo',
+        const ctx = document.getElementById('statsChart').getContext('2d');
+        const chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Soma',
+                data: sumData,
+                borderColor: 'blue',
+                fill: false,
               },
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Valor',
+              {
+                label: 'Média',
+                data: avgData,
+                borderColor: 'green',
+                fill: false,
+              },
+              {
+                label: 'Mínimo',
+                data: minData,
+                borderColor: 'red',
+                fill: false,
+              },
+              {
+                label: 'Máximo',
+                data: maxData,
+                borderColor: 'orange',
+                fill: false,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Tempo',
+                },
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Valor',
+                },
               },
             },
           },
-        },
-      });
+        });
 
-      socket.on('connect', () => {
-        document.getElementById('output').textContent =
-          '✅ Conectado. Solicitando estatísticas...';
-        socket.emit('requestStatistics');
-      });
+        socket.on('connect', () => {
+          document.getElementById('output').textContent =
+            '✅ Conectado. Solicitando estatísticas...';
+          socket.emit('requestStatistics');
+        });
 
-      socket.on('statisticsUpdate', (data) => {
-        const timestamp = new Date().toLocaleTimeString();
+        socket.on('statisticsUpdate', (data) => {
+          const timestamp = new Date().toLocaleTimeString();
 
-        labels.push(timestamp);
-        sumData.push(data.sum);
-        avgData.push(data.avg);
-        minData.push(data.min);
-        maxData.push(data.max);
+          labels.push(timestamp);
+          sumData.push(data.sum);
+          avgData.push(data.avg);
+          minData.push(data.min);
+          maxData.push(data.max);
 
-        // Limita a 10 pontos no gráfico
-        if (labels.length > 10) {
-          labels.shift();
-          sumData.shift();
-          avgData.shift();
-          minData.shift();
-          maxData.shift();
-        }
+          if (labels.length > 10) {
+            labels.shift();
+            sumData.shift();
+            avgData.shift();
+            minData.shift();
+            maxData.shift();
+          }
 
-        chart.update();
+          chart.update();
 
-        document.getElementById('output').textContent =
-          '📊 Última atualização:\n' + JSON.stringify(data, null, 2);
-      });
+          document.getElementById('output').textContent =
+            '📊 Última atualização:\n' + JSON.stringify(data, null, 2);
+        });
 
-      socket.on('disconnect', () => {
-        document.getElementById('output').textContent = '❌ Desconectado';
+        socket.on('disconnect', () => {
+          document.getElementById('output').textContent = '❌ Desconectado';
+        });
+
+        socket.on('connect_error', (err) => {
+          document.getElementById('output').textContent =
+            '❌ Erro ao conectar: ' + err.message;
+        });
       });
     </script>
   </body>
